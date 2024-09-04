@@ -8,10 +8,24 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField]private float _speed;
     private PlayerController _player;  //handle
+    private Animator _anim;
 
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<PlayerController>();
+        
+        //null check player
+        if (_player == null)
+        {
+            Debug.LogError("Player not found");
+        }
+        
+        _anim = GetComponent<Animator>();
+
+        if (_anim == null)
+        {
+            Debug.LogError("Animator not found");
+        }
     }
 
     void Update()
@@ -38,7 +52,9 @@ public class EnemyController : MonoBehaviour
                 player.Damage(); //tira um de vida
             }
             
-            Destroy(this.gameObject);  //destroi inimigo
+            _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            Destroy(this.gameObject, 2.8f);  //destroi inimigo
         }
 
         if (other.CompareTag("Laser"))  //inimigo tomou o laser
@@ -49,7 +65,10 @@ public class EnemyController : MonoBehaviour
             {
                 _player.AddScore(5);
             }
-            Destroy(this.gameObject);    //destroi o laser
+            
+            _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            Destroy(this.gameObject, 2.8f);    //destroi o laser
         }
     }
 }
